@@ -1,55 +1,69 @@
+<?php
+// Include your database connection file
+include 'db.php';
+
+// Fetch all members from the database
+$sql = "SELECT id, name, phone, age, package, created_at, duration FROM customers";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>manage-members</title>
+    <title>Manage Members</title>
 </head>
 <body>
     <h1>Manage Members</h1>
-    <h2><a href="http://localhost/gym/">home</a></h2>
+    <h2><a href="http://localhost/gym/">Home</a></h2>
 
     <p>Welcome to the manage members page</p>
-    <p><a href="http://localhost/gym/register.php">Register</a></p>
-    <table>
+    <p><a href="http://localhost/gym/register.php">Register New Member</a></p>
+
+    <table style="border: 1;" >
         <thead>
             <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>phone</th>
-            <th>age</th>
-            <th>package</th>
-            <th>renewal</th>
-            <th>action</th></tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Age</th>
+                <th>Package</th>
+                <!-- <th>Created At</th> -->
+                <th>Days Left</th>
+                <th>Action</th>
+            </tr>
         </thead>
         <tbody>
+            <?php foreach ($members as $member): 
+                // Calculate expiration date
+                $created_at = new DateTime($member['created_at']);
+                $duration_days = (int)$member['duration'];
+                $expiration_date = clone $created_at;
+                $expiration_date->modify("+{$duration_days} days");
+
+                // Calculate days left
+                $today = new DateTime();
+                $interval = $today->diff($expiration_date);
+                $days_left = $interval->format('%r%a'); // The '%r' is to show negative days if expired
+
+
+                // Determine if the membership has expired
+                $status = ($days_left <= 0) ? 'Expired' : "{$days_left} days left";
+            ?>
             <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>1234567890</td>
-                <td>25</td>
-                <td>monthly</td>
-                <td>2022-01-01</td>
-                <td><a href="renewal.php">renewal</a></td>
+                <td><?php echo htmlspecialchars($member['id']); ?></td>
+                <td><?php echo htmlspecialchars($member['name']); ?></td>
+                <td><?php echo htmlspecialchars($member['phone']); ?></td>
+                <td><?php echo htmlspecialchars($member['age']); ?></td>
+                <td><?php echo htmlspecialchars($member['package']); ?></td>
+
+                <td><?php echo $status; ?></td>
+                <td><a href="renewal.php?id=<?php echo $member['id']; ?>">Renewal</a></td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Jane</td>
-                <td>0987654321</td>
-                <td>30</td>
-                <td>quarterly</td>
-                <td>2022-01-01</td>
-                <td><a href="renewal.php">renewal</a></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Bob</td>
-                <td>9876543210</td>
-                <td>35</td>
-                <td>half-yearly</td>
-                <td>2022-01-01</td>
-                <td><a href="renewal.php">renewal</a></td>
-            </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </body>
