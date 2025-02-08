@@ -34,6 +34,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * The attributes that are guarded.
+     *
+     * @var list<string>
+     */
+    protected $guarded = [
+        'id',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

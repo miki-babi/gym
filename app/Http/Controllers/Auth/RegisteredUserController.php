@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RegisteredUserController extends Controller
 {
@@ -33,13 +34,22 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone_number' => ['required', 'string', 'regex:/^\+?[0-9]{10,15}$/'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phone_number' => $request->phone_number,
         ]);
+
+        // Generate QR code using user ID
+        $qrCodePath = 'qrcodes/user_' . $user->id . '.png';
+        QrCode::format('png')->size(200)->generate("example.com?$user->id", storage_path('app/public/' . $qrCodePath));
+
+        // Update user with QR code path
+        $user->update(['QRCodePath' => $qrCodePath]);
 
         event(new Registered($user));
 

@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>Laravel</title>
 
-        <!-- Styles / Scripts -->
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    </head>
+    <!-- Styles / Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <body>
-        <!-- Your application's root component -->
-        <div id="app">
-            <h1 class="font-bold text-[4rem] text-blue-400">Title</h1>
-        </div>
-    </body>
+</head>
+
+<body>
+    <!-- Your application's root component -->
+    <div id="app">
+        <h1 class="font-bold text-[4rem] text-blue-400">Title</h1>
+    </div>
+</body>
+
 </html>

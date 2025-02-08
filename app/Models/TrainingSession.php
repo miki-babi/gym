@@ -5,22 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubscriptionPlan extends Model
+class TrainingSession extends Model
 {
     use HasFactory;
 
     // Specify the table name if it doesn't follow Laravel's naming convention
-    protected $table = 'subscription_plans';
+    protected $table = 'training_sessions';
 
     // Specify the primary key if it's not 'id'
-    protected $primaryKey = 'PlanID';
+    protected $primaryKey = 'SessionID';
 
     // Allow all attributes to be mass assignable
     protected $guarded = [];
 
-    // Define any relationships, for example, a relationship to the Package model
-    public function package()
+    // Define relationships if necessary
+    public function trainer()
     {
-        return $this->belongsTo(Package::class, 'PackageID', 'PackageID');
+        return $this->belongsTo(User::class, 'TrainerID');
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(SessionAttendance::class, 'SessionID');
     }
 }
