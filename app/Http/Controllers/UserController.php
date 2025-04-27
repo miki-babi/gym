@@ -25,27 +25,42 @@ class UserController extends Controller
     // Store a newly created user in storage
     public function store(Request $request)
     {
-        dd($request->all());
-        $validatedData = $request->validate([
+        try {
+            $validatedData = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
-            'phone_number' => 'required|string|regex:/^\+?[0-9]{10,15}$/',
+            'phone_number' => 'required|string',
             'password' => 'required|string|min:8',
-        ]);
-
+            'role' => 'required|in:Admin,Customer,Employee,Trainer',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }
+        // dd($validatedData);
         $validatedData['password'] = bcrypt($validatedData['password']);
 
         // Create the user
         $user = User::create($validatedData);
 
-        // Generate QR code using user ID
-        $qrCodePath = 'qrcodes/user_' . $user->id . '.png';
-        QrCode::format('png')->size(200)->generate("teeee", storage_path('app/public/' . $qrCodePath));
+        // Generate QR code using gym ID
+        $gymid = 'member' . $user->id;
+        $directoryPath = storage_path("app/public/qrcodes");
+        $filePath = $directoryPath . "/$gymid-qrcode.png";
+
+        // Check if the directory exists, if not, create it
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        QrCode::format('png')->size(300)->generate("https://example.com?$gymid", $filePath);
+
+        // Set the QR code path
+        $qrCodePath = "public/qrcodes/$gymid-qrcode.png";
 
         // Update user with QR code path
-        $user->update(['QRCodePath' => $qrCodePath]);
+        User::where('id', $user->id)->update(['QRCodePath' => $qrCodePath]);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()->route('dashboard')->with('success', 'User created successfully.');
     }
 
     // Display the specified user

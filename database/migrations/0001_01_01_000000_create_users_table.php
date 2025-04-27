@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('id');
             $table->string('name', 100);
             $table->string('email', 100)->unique();
-            $table->string('phoneNumber', 15)->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->date('JoinDate')->default(DB::raw('CURRENT_DATE'));

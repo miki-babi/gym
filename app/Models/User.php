@@ -17,11 +17,16 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded =[];
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    //     'phone_number',
+    //     'role',
+    //     'QRCodePath',
+        
+    // ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -38,9 +43,9 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $guarded = [
-        'id',
-    ];
+    // protected $guarded = [
+    //     'id',
+    // ];
 
     /**
      * Get the attributes that should be cast.
